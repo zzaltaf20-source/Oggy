@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0b1030">
+<meta name="description" content="A cinematic interactive birthday adventure — four challenges, four secret digits, one mystery gift.">
+<title>🎁 A Birthday Adventure</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎁</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,900;1,9..144,500;1,9..144,700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<canvas id="bg-canvas" aria-hidden="true"></canvas>
+<div id="fx-layer" aria-hidden="true"></div>
+
+<!-- ══════════════ OPENING ══════════════ -->
+<section id="screen-opening" class="screen active" aria-label="Opening">
+  <div class="opening-stage">
+    <div class="opening-light" id="opening-light" aria-hidden="true"></div>
+    <div class="opening-lines">
+      <p class="opening-text" id="opening-text-1">Something special is waiting…</p>
+      <p class="opening-text" id="opening-text-2">Are you ready?</p>
+    </div>
+    <div class="opening-heart" id="opening-heart" aria-hidden="true">✦</div>
+    <button id="btn-begin" class="btn btn-gold btn-breath" type="button">Begin the Adventure</button>
+  </div>
+</section>
+
+<!-- ══════════════ ADVENTURE MAP ══════════════ -->
+<section id="screen-map" class="screen" aria-label="Adventure map">
+  <div class="screen-scroll map-scroll">
+    <span class="map-deco deco-a" aria-hidden="true">✦</span>
+    <span class="map-deco deco-b" aria-hidden="true">✧</span>
+    <span class="map-deco deco-c" aria-hidden="true">✦</span>
+    <header class="map-header">
+      <p class="kicker">YOUR JOURNEY</p>
+      <h1 class="map-title">A Birthday <em>Adventure</em></h1>
+      <div class="map-progress">
+        <span id="map-progress-text">0 / 4 COMPLETE</span>
+        <div class="progress-track"><div class="progress-fill" id="map-progress-fill"></div></div>
+      </div>
+    </header>
+    <div class="map-path-wrap" id="map-path-wrap">
+      <svg id="map-path-svg" class="map-path-svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="pathGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#ffd166"/>
+            <stop offset=".55" stop-color="#ff7d9c"/>
+            <stop offset="1" stop-color="#a99cf5"/>
+          </linearGradient>
+        </defs>
+        <path id="map-path-glow" d=""/>
+        <path id="map-path" d=""/>
+      </svg>
+      <ol class="map-nodes" id="map-nodes"></ol>
+    </div>
+    <p class="map-hint">Tap the glowing node to play ✦</p>
+  </div>
+</section>
+
+<!-- ══════════════ LEVEL 1 · MEMORY ══════════════ -->
+<section id="screen-level1" class="screen" aria-label="Level 1 — Memory match">
+  <div class="screen-scroll level-scroll">
+    <header class="level-header">
+      <button class="btn-back btn-back-map" type="button" aria-label="Back to map">←</button>
+      <div>
+        <p class="kicker">LEVEL 01 · MEMORY</p>
+        <h2 class="level-title">Memory Match</h2>
+      </div>
+    </header>
+    <p class="level-sub">Flip the cards and find every matching pair.</p>
+    <div id="memory-grid" class="memory-grid"></div>
+  </div>
+</section>
+
+<!-- ══════════════ LEVEL 2 · CATCH ══════════════ -->
+<section id="screen-level2" class="screen" aria-label="Level 2 — Catch the stars">
+  <div class="screen-scroll level-scroll">
+    <header class="level-header">
+      <button class="btn-back btn-back-map" type="button" aria-label="Back to map">←</button>
+      <div>
+        <p class="kicker">LEVEL 02 · CATCH</p>
+        <h2 class="level-title">Catch the Stars</h2>
+      </div>
+    </header>
+    <p class="level-sub">Tap the falling treats — dodge the trouble!</p>
+    <div class="catch-hud">
+      <span class="catch-score">⭐ <b id="catch-score">0</b> / 8</span>
+      <div class="progress-track grow"><div class="progress-fill" id="catch-progress"></div></div>
+    </div>
+    <div id="catch-area" class="catch-area" aria-label="Tap the falling birthday treats"></div>
+  </div>
+</section>
+
+<!-- ══════════════ LEVEL 3 · SCRAMBLE ══════════════ -->
+<section id="screen-level3" class="screen" aria-label="Level 3 — Word scramble">
+  <div class="screen-scroll level-scroll">
+    <header class="level-header">
+      <button class="btn-back btn-back-map" type="button" aria-label="Back to map">←</button>
+      <div>
+        <p class="kicker">LEVEL 03 · PUZZLE</p>
+        <h2 class="level-title">Word Scramble</h2>
+      </div>
+    </header>
+    <p class="level-sub">These letters got lost on the way. Put them back together.</p>
+    <div id="scramble-tiles" class="scramble-tiles" aria-hidden="true"></div>
+    <label class="sr-only" for="scramble-input">Type the unscrambled word</label>
+    <input id="scramble-input" type="text" maxlength="8" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="· · · · · · · ·">
+    <p id="scramble-status" class="scramble-status" aria-live="polite">Attempts left: 3</p>
+    <button id="scramble-submit" class="btn btn-gold" type="button">Unscramble</button>
+    <button id="scramble-hint" class="btn btn-ghost btn-small" type="button">✨ Need a hint?</button>
+    <p id="scramble-hint-text" class="hint-text" hidden></p>
+  </div>
+</section>
+
+<!-- ══════════════ LEVEL 4 · WORD SEARCH ══════════════ -->
+<section id="screen-level4" class="screen" aria-label="Level 4 — Word search">
+  <div class="screen-scroll level-scroll">
+    <header class="level-header">
+      <button class="btn-back btn-back-map" type="button" aria-label="Back to map">←</button>
+      <div>
+        <p class="kicker">LEVEL 04 · WORD SEARCH</p>
+        <h2 class="level-title">Word Search</h2>
+      </div>
+    </header>
+    <p class="level-sub">Find every hidden word — drag across the letters.</p>
+    <div class="ws-words" id="ws-words"></div>
+    <div id="ws-grid" class="ws-grid" aria-label="Word search letter grid"></div>
+    <p class="ws-tip">✦ Words can hide in any direction — even backwards ✦</p>
+  </div>
+</section>
+
+<!-- ══════════════ MYSTERY GIFT ══════════════ -->
+<section id="screen-gift" class="screen" aria-label="Mystery gift">
+  <div class="screen-scroll gift-scroll">
+    <header class="level-header">
+      <button class="btn-back btn-back-map" type="button" aria-label="Back to map">←</button>
+      <div>
+        <p class="kicker">05 · MYSTERY GIFT</p>
+        <h2 class="level-title">Unlock the Gift</h2>
+      </div>
+    </header>
+    <div class="gift-stage" id="gift-stage">
+      <div class="gift-box" id="gift-box" aria-hidden="true">
+        <div class="gift-glow"></div>
+        <div class="gift-bow"></div>
+        <div class="gift-lid"></div>
+        <div class="gift-body"></div>
+        <div class="gift-ribbon"></div>
+      </div>
+    </div>
+    <p class="gift-line">Four adventures. Four hidden digits. One final secret.</p>
+    <p class="slot-label">COLLECTED DIGITS</p>
+    <div class="digit-slots" id="digit-slots"></div>
+    <p class="kicker enter-code">ENTER THE CODE</p>
+    <div class="pin-row" id="pin-row">
+      <input class="pin-box" type="text" inputmode="numeric" maxlength="1" autocomplete="off" aria-label="1st digit">
+      <input class="pin-box" type="text" inputmode="numeric" maxlength="1" autocomplete="off" aria-label="2nd digit">
+      <input class="pin-box" type="text" inputmode="numeric" maxlength="1" autocomplete="off" aria-label="3rd digit">
+      <input class="pin-box" type="text" inputmode="numeric" maxlength="1" autocomplete="off" aria-label="4th digit">
+    </div>
+    <p id="pin-message" class="pin-message" aria-live="polite"></p>
+    <p class="pin-hint">Hint: the four secret digits you collected ✦</p>
+  </div>
+  <div class="gift-flash" id="gift-flash" aria-hidden="true"></div>
+</section>
+
+<!-- ══════════════ FINAL REVEAL ══════════════ -->
+<section id="screen-final" class="screen" aria-label="Final reveal">
+  <div class="screen-scroll final-scroll">
+    <div class="final-stage" id="final-stage">
+      <div class="final-spark" id="final-spark" aria-hidden="true"></div>
+      <div class="photo-frame" id="photo-frame">
+        <img id="final-photo" alt="A cherished photo of someone truly special">
+        <div class="photo-placeholder" id="photo-placeholder" hidden>
+          <span class="ph-icon" aria-hidden="true">🎂</span>
+          <span class="ph-text">Your photo goes here</span>
+          <code>assets/birthday-photo.jpg</code>
+        </div>
+      </div>
+      <h2 class="final-title" id="final-title">Happy Birthday! ❤️</h2>
+      <div class="final-message" id="final-message"></div>
+      <p class="final-signoff" id="final-signoff"></p>
+      <div class="final-actions" id="final-actions">
+        <button id="btn-surprise" class="btn btn-gold" type="button">✨ One More Surprise</button>
+        <button id="btn-replay" class="btn btn-ghost" type="button">↺ Replay Adventure</button>
+      </div>
+    </div>
+  </div>
+  <div class="final-veil" id="final-veil" aria-hidden="true"></div>
+</section>
+
+<!-- ══════════════ SECRET DIGIT MODAL ══════════════ -->
+<div class="modal" id="digit-modal" role="dialog" aria-modal="true" aria-labelledby="dm-title">
+  <div class="modal-card">
+    <div class="dm-icon" aria-hidden="true">✦</div>
+    <p class="dm-kicker" id="dm-kicker">SECRET DIGIT UNLOCKED</p>
+    <h3 class="dm-title" id="dm-title">Level complete!</h3>
+    <div class="dm-digit" id="dm-digit" aria-live="assertive">7</div>
+    <p class="dm-note" id="dm-note">Keep it safe — you'll need all four at the end.</p>
+    <button id="dm-continue" class="btn btn-gold" type="button">Continue →</button>
+  </div>
+</div>
+
+<!-- ══════════════ HIDDEN SURPRISE ══════════════ -->
+<div class="surprise" id="surprise-overlay" role="dialog" aria-modal="true" aria-label="A hidden surprise" hidden>
+  <div class="surprise-card">
+    <span class="surprise-star" aria-hidden="true">✦</span>
+    <p class="surprise-text" id="surprise-text"></p>
+    <button class="btn btn-ghost btn-small" id="surprise-close" type="button">Close ✕</button>
+  </div>
+</div>
+
+<div id="toast" class="toast" role="status"></div>
+<button id="btn-music" class="btn-music" type="button" aria-label="Toggle music" aria-pressed="false">🔇</button>
+
+<noscript><p style="color:#fff;text-align:center;padding:2rem">This adventure needs JavaScript enabled. 🎂</p></noscript>
+<script src="script.js"></script>
+</body>
+        </html>
